@@ -1,5 +1,6 @@
 import unittest
 from htmlnode import HTMLNode
+from textnode import TextNode, TextType
 
 class TestHTMLNode(unittest.TestCase):
     def test_to_html_props(self):
