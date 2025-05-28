@@ -1,8 +1,17 @@
 import re
 from textnode import TextNode, TextType
 
+def text_to_textnodes(text):
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+
+    return nodes
+
 def split_nodes_delimiter(old_nodes, delimeter, text_type):
-    #print(f"in split_nodes_delimeter. delimeter:{delimeter}, text_type:{text_type}")
     new_nodes = []
     for old_node in old_nodes:
         # If an "old node" is not a TextType.TEXT type, just add it to the new
@@ -22,6 +31,7 @@ def split_nodes_delimiter(old_nodes, delimeter, text_type):
             raise ValueError("invalid open/closing {delimeter} pair")
 
         none_text_parts = []
+        
         for index in range(0, len(indexes), 2):
             open_index  = indexes[index]
             close_index = indexes[index + 1]
@@ -62,24 +72,14 @@ def create_nodes_from_node(node_parts, none_text_parts, text_type):
 def split_text(text_str, splitter):
     # check if the splitters match
     indexes = [splitter_index for splitter_index in range(len(text_str)) if text_str.startswith(splitter, splitter_index)]
-    print(f"indexes: {indexes}")
     
     if len(indexes) % 2 == 0:
-        print("Valid formatting")
-        # Debug. List the string(s)
         for index in range(0, len(indexes), 2):
             open_index  = indexes[index]
             close_index = indexes[index + 1]
             
             # skip the delimiter
             str_start_index = open_index + len(splitter)
-            print(f"string at [{str_start_index}:{close_index}]: {text_str[str_start_index:close_index]}")
-
-        print("Text")
-        print(text_str)    
-        print("parts")
-        parts = text_str.split(splitter)
-        print(parts)
     else:
         print("Invalid formatting")
 
